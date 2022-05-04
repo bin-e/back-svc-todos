@@ -1,0 +1,37 @@
+project.archivesBaseName = "back-svc-todo"
+version = '0.0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(":domain")
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+//    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+//    implementation 'org.springframework.cloud:spring-cloud-starter-sleuth' // MSA 트랜잭션 로그 추적
+//    implementation 'org.springframework.boot:spring-boot-starter-actuator' // 애플리케이션의 모니터링
+    implementation 'org.springframework.cloud:spring-cloud-starter-config' // Application config
+    implementation 'org.springframework.data:spring-data-envers'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation "com.querydsl:querydsl-jpa:$queryDslVersion"     // QueryDSL
+    kapt "com.querydsl:querydsl-apt:$queryDslVersion:jpa"
+
+    implementation 'javax.validation:validation-api'
+    implementation 'com.h2database:h2'
+
+    testImplementation 'org.springframework.integration:spring-integration-test'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'io.mockk:mockk:1.12.3'
+}
+
+//apply from: "$buildScriptUrl/docker-jib.gradle"
+//jib.from.image = "openjdk:8-jdk-alpine"
+//jib.from.image = "openjdk:11-jdk-slim"
+//compileKotlin {
+//    kotlinOptions {
+//        languageVersion = "1.4"
+//    }
+//}

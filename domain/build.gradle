@@ -1,0 +1,14 @@
+project.archivesBaseName = "back-svc-todo-domain"
+version = '0.0.1-SNAPSHOT'
+
+bootJar.enabled = false
+jar.enabled = true
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "javax.validation:validation-api"
+    implementation "org.springframework:spring-webmvc"
+}

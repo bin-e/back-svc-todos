@@ -1,0 +1,4 @@
+rootProject.name = 'back-svc-todos'
+include 'domain'
+include 'service'
+

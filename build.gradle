@@ -1,0 +1,110 @@
+buildscript {
+    ext {
+        kotlinVersion = '1.6.10'
+        springBootVersion = '2.3.11.RELEASE'
+        springCloudVersion = 'Hoxton.SR11'
+        queryDslVersion = '5.0.0'
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion"
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+// IntelliJ 개발환경
+    apply plugin: 'idea'
+// spring boot 용
+    apply plugin: 'org.springframework.boot'
+// spring cloud 등의 dependency version 을 자동으로 지정해줌
+    apply plugin: 'io.spring.dependency-management'
+// kotlin compile
+    apply plugin: 'kotlin'
+// spring application 을 kotlin 으로 작성시 필요
+    apply plugin: 'kotlin-spring'
+// jpa 관련 클래스들을 위한 plugin. 아래의 allOpen, noArg 에 해당함.
+    apply plugin: 'kotlin-jpa'
+// QueryDSL 의 QClass 생성을 위한 plugin
+    apply plugin: 'kotlin-kapt'
+
+    group = 'kr.dietfriends'
+    // java source 호환성
+    sourceCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        /**
+         * default for kotlin
+         */
+        implementation 'org.jetbrains.kotlin:kotlin-reflect'
+        implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor'
+        implementation 'io.projectreactor.kotlin:reactor-kotlin-extensions'
+        implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+        implementation 'io.github.microutils:kotlin-logging:1.7.9'
+
+        /**
+         * swagger documentation
+         */
+        implementation 'io.springfox:springfox-boot-starter:3.0.0'
+        implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
+        /**
+         * for JDK 9+ compatibility
+         */
+        implementation 'com.sun.xml.bind:jaxb-core:2.3.0.1'
+        implementation 'com.sun.xml.bind:jaxb-impl:2.3.2'
+        implementation 'javax.activation:activation:1.1.1'
+        implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    }
+
+    // kotlin-jpa plugin 의 설정. 아래 annotation 이 적용된 class 는 컴파일 시 `open` 키워드가 적용된다.
+    allOpen {
+        annotation 'javax.persistence.Entity'
+        annotation 'javax.persistence.MappedSuperclass'
+        annotation 'javax.persistence.Embeddable'
+    }
+// kotlin-jpa plugin 의 설정. 아래 annotation 이 적용된 class 는 컴파일 시 default constructor 가 추가된다.
+    noArg {
+        annotation 'javax.persistence.Entity'
+        annotation 'javax.persistence.MappedSuperclass'
+        annotation 'javax.persistence.Embeddable'
+    }
+
+    // library 들의 dependency를 자동으로 관리해주기 위해...
+    dependencyManagement {
+        imports {
+            // spring 관련 library 들은 maven bom(Bill Of Materials) 에 지정된 버전들로 자동으로 타 library 의 version 이 결정되도록 한다.
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+// kotlin 컴파일 시 필요한 추가 옵션.
+    compileKotlin {
+        kotlinOptions {
+            freeCompilerArgs = ['-Xjsr305=strict']
+            jvmTarget = '1.8'
+        }
+    }
+    compileTestKotlin {
+        kotlinOptions {
+            freeCompilerArgs = ['-Xjsr305=strict']
+            jvmTarget = '1.8'
+        }
+    }
+}
