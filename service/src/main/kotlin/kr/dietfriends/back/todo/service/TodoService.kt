@@ -1,7 +1,9 @@
 package kr.dietfriends.back.todo.service
 
+import kr.dietfriends.back.todo.common.ErrorMessages.TODO_NOT_FOUND
 import kr.dietfriends.back.todo.domain.Todo
 import kr.dietfriends.back.todo.entity.TodoEntity
+import kr.dietfriends.back.todo.http.CommonException
 import kr.dietfriends.back.todo.repository.TodoRepository
 import org.springframework.stereotype.Service
 import java.time.format.DateTimeFormatter
@@ -24,7 +26,7 @@ class TodoService(
 
     fun update(todoId: Int, todoBasic: Todo.TodoBasic) =
         todoRepository.findById(todoId)
-            .orElseThrow { throw Exception() } // TODO: Exception handling
+            .orElseThrow { throw CommonException(TODO_NOT_FOUND) }
             .run {
                 this.name = todoBasic.name
                 this.completed = todoBasic.completed
@@ -35,7 +37,7 @@ class TodoService(
 
     fun delete(todoId: Int) {
         todoRepository.findById(todoId)
-            .orElseThrow { throw Exception() } // TODO: Exception handling
+            .orElseThrow { throw CommonException(TODO_NOT_FOUND) }
             .also { todoRepository.delete(it) }
     }
 
@@ -49,9 +51,6 @@ class TodoService(
         it.completedAt = this.completedAt
         it.createdAt = this.createdAt
         it.updatedAt = this.updatedAt
-//        it.completedAt = this.completedAt?.format(DateTimeFormatter.ISO_DATE_TIME)
-//        it.createdAt = this.createdAt?.format(DateTimeFormatter.ISO_DATE_TIME)
-//        it.updatedAt = this.updatedAt?.format(DateTimeFormatter.ISO_DATE_TIME)
     }
 
 }
